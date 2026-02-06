@@ -11,20 +11,20 @@
     "url": "git+https://github.com/Nehimi/nodejs.git"
   },
   "license": "ISC",
-  "author": "Nehclsimi",
-  "type": "commonjs",
+  "author": "Nehimi",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node backend/src/index.js",
+    "dev": "nodemon backend/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^8.0.3",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "mongoose": "^8.22.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.1.11"
   }
 }
