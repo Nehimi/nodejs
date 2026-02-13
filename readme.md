@@ -24,11 +24,8 @@ This document chronicles my complete journey from beginner to professional backe
 
 #### **Week 3: API Development**
 - **RESTful API Design** - Created proper endpoints
-- **Request/Response Flow** - Understood complete request lifecycle
-- **Postman Testing** - Mastered API testing workflows
-- **Data Validation** - Added input validation and sanitization
 
-### 🏗️ **Current Project Architecture**
+### Current Project Architecture
 
 ```
 backend-intro/
@@ -36,12 +33,16 @@ backend-intro/
 │   └── src/
 │       ├── config/
 │       │   └── db.js              # Database connection
-│       ├── models/
-│       │   └── User.js            # User schema
 │       ├── controllers/
-│       │   └── user.controller.js  # Business logic
+│       │   ├── user.controller.js  # User business logic
+│       │   └── auth.controller.js  # Authentication logic
+│       ├── models/
+│       │   └── User.js            # User schema with password hashing
 │       ├── routes/
-│       │   └── user.routes.js     # API endpoints
+│       │   ├── user.routes.js     # User API endpoints
+│       │   └── auth.routes.js     # Authentication endpoints
+│       ├── middleware/
+│       │   └── auth.middleware.js # JWT verification & route protection
 │       ├── app.js                 # Express app setup
 │       └── index.js               # Server entry point
 ├── practice1.js                    # First Express server
@@ -50,9 +51,9 @@ backend-intro/
 └── PRACTICE_JOURNEY.md             # Detailed learning log
 ```
 
-### 🎉 **Key Achievements**
+### Key Achievements
 
-#### **✅ Complete User Management System**
+#### Complete User Management System
 ```javascript
 // API Endpoints Built
 POST   /api/v1/users/register    # Create user
