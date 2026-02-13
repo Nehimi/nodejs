@@ -2,10 +2,15 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 // Generate JWT Token
+// jwt.sign(payload, secretOrPrivateKey, [options, callback])
 const generateToken = (id) => {
+    if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET environment variable is not set');
+    }
+    
     return jwt.sign(
         { id },//payload
-        process.env.JWT_SECRET || "fallback_secret",//secret
+        process.env.JWT_SECRET,
         {
             expiresIn: "30d",//expires in
         }
@@ -15,7 +20,7 @@ const generateToken = (id) => {
 // User Login
 export const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password } = req.body;//destructuring
 
         // Basic validation
         if (!email || !password) {

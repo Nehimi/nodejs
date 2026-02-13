@@ -3,10 +3,9 @@ import jwt from "jsonwebtoken";
 // Authentication Middleware
 export const protect = async (req, res, next) => {
     let token;
-
-    // Check if token exists in headers
+ // Extract token from header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.split(' ')[1];
+        token = req.headers.authorization.split(' ')[1];//Bearer" የሚለውን ቃል ትቶ ከፊት ለፊቱ ያለውን እውነተኛውን የቶከን ኮድ ብቻ ነጥሎ ይወስዳል።
     }
 
     // Check if token exists
@@ -18,8 +17,12 @@ export const protect = async (req, res, next) => {
     }
 
     try {
-        // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_secret");
+        // Verify token (no fallback - fail fast if secret missing)
+        if (!process.env.JWT_SECRET) {
+            throw new Error('JWT_SECRET environment variable is not set');
+        }
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         // Set user in request object
         req.user = { id: decoded.id };
