@@ -77,7 +77,84 @@ DELETE /api/v1/users/:id        # Delete user
 
 ---
 
-## 🚀 **Phase 2: Advanced Skills (Next Steps)**
+## � **Understanding HTTP Headers in Authentication**
+
+### 📧 **Header in Computer Communication**
+
+**Header** in computer communication refers to "additional information that precedes the main message."
+
+#### **Easy Analogy: The Letter Example**
+When you write a letter:
+- **Envelope Information** = **Header** (sender's address, recipient's address, stamp type)
+- **Letter Content** = **Body** (the main message)
+
+### 🌐 **Headers in Web Development (HTTP Request/Response)**
+
+Headers tell the server several important things:
+
+#### **📋 What Does a Header Contain? (Examples)**
+
+| Header Type | Purpose | Example |
+|-------------|---------|---------|
+| **Content-Type** | Specifies data format | `application/json`, `image/jpeg` |
+| **User-Agent** | Identifies client | `Chrome/91.0`, `Mobile App v1.0` |
+| **Authorization** | Authentication token | `Bearer eyJhbGciOiJIUzI1NiIs...` |
+
+#### **🔐 Authorization Header (Where Your Code Belongs)**
+
+This is the place where it says, "Is this person allowed to enter? Here is their ID (Token)!"
+
+**Example in our Authentication System:**
+```javascript
+// In auth.middleware.js
+if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1]; // Extract token from header
+}
+```
+
+**How it looks in HTTP Request:**
+```http
+GET /api/v1/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+```
+
+### 📊 **Summary Table**
+
+| Term | Analogy (The Letter) | Web Development Role |
+|------|---------------------|-------------------|
+| **Header** | The Envelope (Metadata) | Instructions and Authentication |
+| **Body** | The Letter (Content) | The actual Data (JSON, HTML, etc.) |
+
+### 🎯 **Why Headers Matter for Authentication**
+
+1. **Security**: Tokens are sent in headers, not URL parameters
+2. **Standardization**: HTTP protocol standard way to send metadata
+3. **Flexibility**: Can carry various types of authentication data
+4. **Separation**: Keeps authentication separate from actual data
+
+### 💡 **In Our Project**
+
+```javascript
+// Client sends request with header
+fetch('/api/v1/auth/me', {
+    headers: {
+        'Authorization': 'Bearer ' + token,  // Header: Authentication
+        'Content-Type': 'application/json'   // Header: Data format
+    }
+});
+
+// Server reads header
+if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1]; // Extract token from header
+}
+```
+
+**Headers are the envelope that protects and delivers your authentication tokens securely!** 🔒
+
+---
+
+## �🚀 **Phase 2: Advanced Skills (Next Steps)**
 
 ### 🎯 **Week 4-5: Authentication & Security**
 
