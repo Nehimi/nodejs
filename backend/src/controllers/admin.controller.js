@@ -1,5 +1,48 @@
 import User from "../models/User.js";
 
+// Create admin user (for initial setup)
+export const createAdmin = async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User with this email already exists"
+            });
+        }
+        
+        // Create admin user
+        const admin = new User({
+            name: name.trim(),
+            email: email.toLowerCase().trim(),
+            password: password,
+            role: "admin"
+        });
+        
+        await admin.save();
+        
+        res.status(201).json({
+            success: true,
+            message: "Admin user created successfully",
+            data: {
+                id: admin._id,
+                name: admin.name,
+                email: admin.email,
+                role: admin.role
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to create admin",
+            error: error.message
+        });
+    }
+};
+
 // Get all users (admin only)
 export const getAllUsersAdmin = async (req, res) => {
     try {
@@ -35,7 +78,10 @@ export const updateUserRole = async (req, res) => {
         const user = await User.findByIdAndUpdate(
             id,
             { role },
-            { new: true, runValidators: true }
+            { 
+                new: true,
+                runValidators: true 
+            }
         ).select('-password');
 
         if (!user) {
