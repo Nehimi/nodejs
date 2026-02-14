@@ -1,11 +1,12 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { BlacklistedToken } from "../models/BlacklistedToken.js";
 
 //Midleware is like a gate keeper
 // Authentication Middleware
 export const protect = async (req, res, next) => {
     let token;
- // Extract token from header
+    // Extract token from header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];//Bearer" የሚለውን ቃል ትቶ ከፊት ለፊቱ ያለውን እውነተኛውን የቶከን ኮድ ብቻ ነጥሎ ይወስዳል።
     }
@@ -19,6 +20,15 @@ export const protect = async (req, res, next) => {
     }
 
     try {
+        // Check if token is blacklisted
+        const blacklistedToken = await BlacklistedToken.findOne({ token });
+        if (blacklistedToken) {
+            return res.status(401).json({
+                success: false,
+                message: 'Token has been invalidated (logged out)'
+            });
+        }
+
         // Verify token 
         if (!process.env.JWT_SECRET) {
             throw new Error('JWT_SECRET environment variable is not set');

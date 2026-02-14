@@ -1,5 +1,8 @@
+//controller is like a middle man between the request and the response
+
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
+import { BlacklistedToken } from "../models/BlacklistedToken.js";
 
 // Generate JWT Token
 // jwt.sign(payload, secretOrPrivateKey, [options, callback])
@@ -72,12 +75,36 @@ export const loginUser = async (req, res) => {
     }
 };
 
-// User Logout (in practice, logout is handled client-side by removing token)
+// User Logout - Enhanced implementation with token blacklisting
 export const logoutUser = async (req, res) => {
     try {
+        // Extract token from request
+        const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
+        
+        if (!token) {
+            return res.status(400).json({
+                success: false,
+                message: "No token provided for logout"
+            });
+        }
+
+        // Add token to blacklist
+        const blacklistedToken = await BlacklistedToken.create({
+            token: token,
+            userId: req.user ? req.user.id : null,
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
+        });
+
         res.status(200).json({
             success: true,
-            message: "Logout successful"
+            message: "Logout successful",
+            tokenBlacklisted: true,
+            instruction: "Please remove the JWT token from your client-side storage",
+            // Optional: Return blacklist info for debugging
+            blacklistInfo: {
+                token: blacklistedToken.token,
+                expiresAt: blacklistedToken.expiresAt
+            }
         });
     } catch (error) {
         res.status(500).json({

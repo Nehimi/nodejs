@@ -220,8 +220,6 @@ process.on('uncaughtException', (error) => {
 });
 
 // Run the tests
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main();
-}
+main();
 
 export { runAllTests, makeRequest, checkServer };
