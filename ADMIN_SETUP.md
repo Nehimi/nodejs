@@ -64,11 +64,69 @@ Once you have admin token, test admin endpoints:
 
 | Endpoint | Method | Purpose | Access Level |
 |----------|--------|---------|-------------|
-| `/api/v1/admin/create-admin` | POST | Create admin user | Public |
-| `/api/v1/admin/users` | GET | Get all users | Admin Only |
-| `/api/v1/admin/users/:id/role` | PUT | Update user role | Admin Only |
-| `/api/v1/admin/users/:id` | DELETE | Delete user | Admin Only |
-| `/api/v1/admin/stats` | GET | Get system statistics | Admin Only |
+| `/api/v1/admin/create-admin` | POST | Create admin user | **Admin Only** |
+| `/api/v1/admin/users` | GET | Get all users | **Admin Only** |
+| `/api/v1/admin/users/:id/role` | PUT | Update user role | **Admin Only** |
+| `/api/v1/admin/users/:id` | DELETE | Delete user | **Admin Only** |
+| `/api/v1/admin/stats` | GET | Get system statistics | **Admin Only** |
+
+### 🔐 Security Access Levels
+
+#### **✅ Current Setup (Secure)**
+- **All admin endpoints require authentication**
+- **Only existing admins can create new admins**
+- **Prevents unauthorized admin creation**
+
+#### **⚠️ Previous Setup (Insecure)**
+- **Public admin creation endpoint**
+- **Anyone could create admin users**
+- **Security risk for production**
+
+### 🚀 How to Create First Admin
+
+Since all admin endpoints now require admin access, you have **2 options**:
+
+#### **Option 1: Manual Database Setup (Recommended)**
+1. **Go to MongoDB Atlas** → Collections → users
+2. **Insert first admin manually:**
+```json
+{
+    "name": "Super Admin",
+    "email": "admin@example.com",
+    "password": "hashed_password_here", // Hash this first
+    "role": "admin",
+    "createdAt": "2026-02-14T07:00:00.000Z"
+}
+```
+
+#### **Option 2: Temporary Public Endpoint (Development)**
+Create a temporary public endpoint for initial setup, then remove it.
+
+### 🎯 Admin Access Flow
+
+#### **Step 1: Get Admin Access**
+- **Method 1**: Manual database setup
+- **Method 2**: Existing admin creates new admin
+
+#### **Step 2: Login as Admin**
+```http
+POST http://localhost:8888/api/v1/auth/login
+{
+    "email": "admin@example.com",
+    "password": "admin123"
+}
+```
+
+#### **Step 3: Create More Admins**
+```http
+POST http://localhost:8888/api/v1/admin/create-admin
+Authorization: Bearer ADMIN_TOKEN
+{
+    "name": "New Admin",
+    "email": "newadmin@example.com",
+    "password": "admin123"
+}
+```
 
 ### Example Requests:
 
