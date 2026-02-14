@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 // Authentication Middleware
 export const protect = async (req, res, next) => {
@@ -24,9 +25,23 @@ export const protect = async (req, res, next) => {
         
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Set user in request object
-        req.user = { id: decoded.id };
+        // Get user from database to include role
+        const user = await User.findById(decoded.id).select('id role');
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
 
+        // Set user in request object with role
+        req.user = { 
+            id: user._id, 
+            role: user.role 
+        };
+
+        const clientIP = req.ip;
+        console.log(`User ${user._id} (${user.role}) authenticated from IP: ${clientIP}`);
         next();
     } catch (error) {
         return res.status(401).json({
@@ -36,7 +51,7 @@ export const protect = async (req, res, next) => {
     }
 };
 
-// Optional: Admin middleware (for future use)
+// Admin middleware (for admin-only routes)
 export const admin = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
         next();
