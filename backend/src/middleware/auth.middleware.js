@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+//Midleware is like a gate keeper
 // Authentication Middleware
 export const protect = async (req, res, next) => {
     let token;
@@ -18,7 +19,7 @@ export const protect = async (req, res, next) => {
     }
 
     try {
-        // Verify token (no fallback - fail fast if secret missing)
+        // Verify token 
         if (!process.env.JWT_SECRET) {
             throw new Error('JWT_SECRET environment variable is not set');
         }
@@ -33,16 +34,11 @@ export const protect = async (req, res, next) => {
                 message: 'User not found'
             });
         }
-
-        // Set user in request object with role
+//who you are and what your role is
         req.user = { 
             id: user._id, 
             role: user.role 
         };
-
-        const clientIP = req.ip;
-        console.log(`User ${user._id} (${user.role}) authenticated from IP: ${clientIP}`);
-        next();
     } catch (error) {
         return res.status(401).json({
             success: false,
