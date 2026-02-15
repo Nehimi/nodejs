@@ -124,6 +124,6 @@ export const hybridLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => {
     // Use user ID for authenticated users, IP for unauthenticated
-    return req.user ? `user:${req.user.id}` : `ip:${req.ip}`;
+    return req.user ? `user:${req.user.id}` : req.ip;
   },
 });

@@ -15,8 +15,8 @@ const blacklistedTokenSchema = new mongoose.Schema({
     },
     expiresAt: {
         type: Date,
-        required: true,
-        index: true
+        required: true
+        // TTL index will be created below, no need for index: true here
     },
     createdAt: {
         type: Date,
@@ -26,10 +26,10 @@ const blacklistedTokenSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Index for efficient queries
+// Index for efficient queries - TTL index for automatic cleanup
 blacklistedTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-// Clean up expired tokens automatically
+// Compound index for efficient lookups
 blacklistedTokenSchema.index({ token: 1, userId: 1 });
 
 export const BlacklistedToken = mongoose.model('BlacklistedToken', blacklistedTokenSchema);
